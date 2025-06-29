@@ -17,3 +17,6 @@ vendor/
 .vscode/
 .DS_Store
 *.tgz
+
+node_modules
+dist
