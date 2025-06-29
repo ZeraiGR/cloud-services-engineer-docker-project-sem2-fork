@@ -17,7 +17,7 @@ services:
       dockerfile: Dockerfile
     container_name: myapp-frontend
     ports:
-      - "80:80"
+      - "8080:80"
     networks:
       - myapp-network
     depends_on:
