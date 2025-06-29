@@ -1,0 +1,7 @@
+*
+
+!.gen/
+!*.go
+!cmd/
+!go.*
+!internal/
