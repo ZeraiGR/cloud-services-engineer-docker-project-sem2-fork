@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: myapp-backend
+    ports:
+      - "8081:8081"
+    networks:
+      - myapp-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: myapp-frontend
+    ports:
+      - "80:80"
+    networks:
+      - myapp-network
+    depends_on:
+      - backend
+
+networks:
+  myapp-network:
+    driver: bridge
