@@ -38,6 +38,7 @@ export default defineComponent({
   },
   created() {
     if(!this.$store.state.auth.isLoggedIn) {
+      // @ts-ignore
       this.$router.push('/login');
     }
   },

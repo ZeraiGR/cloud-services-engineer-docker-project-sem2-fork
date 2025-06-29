@@ -38,6 +38,7 @@ export default defineComponent({
   methods: {
     handleLogout() {
       this.$store.dispatch('logout').then(() => {
+        // @ts-ignore
         this.$router.push('/login');
       });
     }

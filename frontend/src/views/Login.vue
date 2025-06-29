@@ -71,6 +71,7 @@ export default defineComponent({
   created() {
     
     if(this.$store.state.auth.isLoggedIn) {
+      // @ts-ignore
       return this.$router.push('/profile');
     }
 
@@ -84,6 +85,7 @@ export default defineComponent({
         email: this.email,
         password: this.password
       }).then((result: any) => {
+        // @ts-ignore
         this.$router.push(this.goto || '/');
       }).catch((error: AxiosError) => {
 

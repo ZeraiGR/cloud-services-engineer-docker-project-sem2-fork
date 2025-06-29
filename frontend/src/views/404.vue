@@ -27,6 +27,7 @@ export default defineComponent({
       this.remainingTime--
       if (this.remainingTime === 0) {
         clearInterval(interval)
+        // @ts-ignore
         this.$router.push('/')
       }
     }, 1000);

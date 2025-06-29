@@ -99,6 +99,7 @@ export default defineComponent({
         this.success_message = data.detail;
         setTimeout(() => {
           this.$emit('close');
+          // @ts-ignore
           this.$router.push('/login');
         }, 3000);
 
