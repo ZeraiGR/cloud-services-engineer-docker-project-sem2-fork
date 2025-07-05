@@ -1,29 +1,27 @@
 # --- Build stage ---
-FROM golang:1.21-alpine AS builder
+FROM golang:1.21 AS builder
 
 WORKDIR /app
 
 COPY go.mod go.sum ./
 
-RUN go mod download
+RUN go mod download && go mod verify
 
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o app ./cmd/api
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o /app/app ./cmd/api
 
 # --- Final stage ---
-FROM alpine:3.18
+FROM gcr.io/distroless/static-debian12 AS final
 
-WORKDIR /app
+COPY --from=builder /app/app /app
 
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+ARG PORT=8081
+ENV PORT=${PORT}
 
-COPY --from=builder /app/app .
+EXPOSE ${PORT}
 
-RUN chown appuser:appgroup /app/app
+WORKDIR /
+USER nonroot:nonroot
 
-USER appuser
-
-EXPOSE 8081
-
-CMD ["./app"]
+CMD ["/app"]
