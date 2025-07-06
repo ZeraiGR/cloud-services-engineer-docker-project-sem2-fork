@@ -1,24 +1,25 @@
-# --- Build stage ---
 FROM node:20-alpine AS builder
 
 WORKDIR /app
 
 COPY package*.json ./
-
-RUN npm install
+RUN npm ci
 
 COPY . .
 
+ARG VUE_APP_API_URL
+ENV VUE_APP_API_URL=${VUE_APP_API_URL}
+
 RUN npm run build
 
-# --- Final stage ---
-FROM nginx:1.25-alpine
+# --- Финальный этап (Final) ---
+FROM nginx:stable-alpine
 
 RUN rm /etc/nginx/conf.d/default.conf
 
-COPY nginx.conf /etc/nginx/conf.d
+COPY nginx.conf /etc/nginx/templates/default.conf.template
 
-COPY --from=builder /app/dist /usr/share/nginx/html
+COPY --from=builder /app/dist/ /usr/share/nginx/html/
 
 EXPOSE 80
 
