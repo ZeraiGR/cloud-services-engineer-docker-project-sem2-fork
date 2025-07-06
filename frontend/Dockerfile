@@ -1,4 +1,4 @@
-FROM node:20-alpine AS builder
+FROM node:20-alpine3.22 AS builder
 
 WORKDIR /app
 
@@ -13,7 +13,7 @@ ENV VUE_APP_API_URL=${VUE_APP_API_URL}
 RUN npm run build
 
 # --- Финальный этап (Final) ---
-FROM nginx:stable-alpine
+FROM nginx:stable-alpine3.21
 
 RUN rm /etc/nginx/conf.d/default.conf
 
