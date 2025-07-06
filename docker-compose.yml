@@ -5,11 +5,41 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+      args:
+        - PORT=${BACKEND_PORT:-8081}
     container_name: myapp-backend
+    env_file:
+      - .env
+    environment:
+      - PORT=${BACKEND_PORT:-8081}
     ports:
-      - "8081:8081"
+      - "${BACKEND_PORT:-8081}:${BACKEND_PORT:-8081}"
     networks:
       - myapp-network
+
+    healthcheck:
+      test: ["CMD", "/app", "--health-check"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+    # security
+    read_only: true
+    tmpfs: /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+
 
   frontend:
     build:
@@ -17,7 +47,7 @@ services:
       dockerfile: Dockerfile
     container_name: myapp-frontend
     ports:
-      - "8080:80"
+      - "3000:3000"
     networks:
       - myapp-network
     depends_on:

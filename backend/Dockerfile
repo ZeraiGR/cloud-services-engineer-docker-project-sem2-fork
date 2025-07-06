@@ -18,9 +18,7 @@ COPY --from=builder /app/app /app
 
 ARG PORT=8081
 ENV PORT=${PORT}
-
 EXPOSE ${PORT}
-
 WORKDIR /
 USER nonroot:nonroot
 

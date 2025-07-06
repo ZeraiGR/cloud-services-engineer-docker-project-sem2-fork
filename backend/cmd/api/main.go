@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"net"
 	"net/http"
@@ -18,12 +19,46 @@ import (
 )
 
 func main() {
+	isHealthCheck := flag.Bool("health-check", false, "Run health check and exit.")
+	flag.Parse()
+
+	if *isHealthCheck {
+		runHealthCheck()
+		return
+	}
+
 	logger.Setup()
 
 	if err := run(); err != nil {
 		logger.Log.Fatal("unexpected error", zap.Error(err))
 		os.Exit(1)
 	}
+}
+
+func runHealthCheck() {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8081"
+	}
+	url := fmt.Sprintf("http://localhost:%s/health", port)
+
+	client := http.Client{
+		Timeout: 3 * time.Second,
+	}
+	
+	resp, err := client.Get(url)
+	if err != nil {
+		logger.Log.Error("health check failed", zap.Error(err))
+		os.Exit(1)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		logger.Log.Error("health check returned non-200 status", zap.Int("status", resp.StatusCode))
+		os.Exit(1)
+	}
+
+	os.Exit(0)
 }
 
 func run() error {
